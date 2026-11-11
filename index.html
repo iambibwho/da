@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analyst Track</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<script>try{var _t=localStorage.getItem("analyst-theme"),_ok={light:1,dark:1,anime:1,safari:1,ocean:1,sunset:1,arcade:1};if(!_ok[_t])_t=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";document.documentElement.dataset.theme=_t;if({dark:1,ocean:1,arcade:1}[_t])document.documentElement.dataset.dark="1"}catch(e){document.documentElement.dataset.theme="light"}</script>
+<style>
+:root{--bg:#f2f5f8;--card:#fff;--ink:#14232b;--mut:#5d6d77;--line:#dbe3e9;--acc:#2447d6;--accsoft:#e3e9fc;--ok:#16825d;--warn:#b7791f;--bad:#c2410c}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0e161b;--card:#16212a;--ink:#e8eef2;--mut:#93a4af;--line:#26343e;--acc:#7b97ff;--accsoft:#1d2a52;--ok:#4cc79b;--warn:#e0b04c;--bad:#f08a5d}
+:root[data-theme=anime]{--bg:#fff0f8;--card:#fff;--ink:#33204a;--mut:#7d5f96;--line:#f3c9e2;--acc:#d92f8f;--accsoft:#ffe3f2;--ok:#0f8f6e;--warn:#a96a10;--bad:#d6452b}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:0 16px 48px}
+main{max-width:760px;margin:0 auto}
+header{padding:28px 0 8px}
+h1{font-size:26px;line-height:1.2;margin:0 0 4px;font-weight:800}
+.sub{color:var(--mut);margin:0}
+nav{display:flex;gap:4px;margin:16px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{background:none;border:0;color:var(--mut);font:inherit;font-weight:700;padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--acc);border-bottom-color:var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+section[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 10px}
+.chart{display:flex;align-items:flex-end;gap:10px;height:120px;margin:6px 0 4px}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;font-size:12px;color:var(--mut)}
+.bar{background:var(--accsoft);border-radius:4px 4px 0 0;position:relative;height:100%;overflow:hidden;display:flex;align-items:flex-end}
+.bar i{display:block;width:100%;background:var(--acc);transition:height .4s}
+.col b{display:block;margin-top:4px;color:var(--ink);font-size:13px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stat{flex:1;min-width:130px;background:var(--bg);border-radius:8px;padding:10px 12px}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:13px;color:var(--mut)}
+label.ck{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+label.ck:first-of-type{border-top:0}
+input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--acc);flex:none}
+label.ck.done span{color:var(--mut);text-decoration:line-through}
+.next{background:var(--accsoft);border-radius:8px;padding:12px 14px}
+.next small{color:var(--mut);display:block}
+.ph-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ph-head small{color:var(--mut)}
+.mini{height:6px;background:var(--line);border-radius:3px;margin:6px 0 8px;overflow:hidden}
+.mini i{display:block;height:100%;background:var(--ok)}
+.ph-goal{font-size:14px;color:var(--mut);margin:0 0 6px}
+form.add{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+form.add input,form.add select,.chips button,.btn{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+form.add .full{grid-column:1/-1}
+.btn{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700;cursor:pointer}
+.btn.ghost{background:none;color:var(--ink);border-color:var(--line)}
+.row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.row small{color:var(--mut);display:block}
+.row select{font:inherit;padding:6px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.x{background:none;border:0;color:var(--mut);font-size:20px;cursor:pointer;padding:4px 8px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--accsoft);color:var(--acc)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chips button{cursor:pointer;padding:6px 12px;font-weight:600}
+.chips button[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+details.q{border-top:1px solid var(--line);padding:10px 0}
+details.q summary{cursor:pointer;font-weight:600;list-style:none;display:flex;gap:8px;justify-content:space-between}
+details.q summary::-webkit-details-marker{display:none}
+details.q .a{margin:10px 0 8px;color:var(--ink);background:var(--bg);padding:12px;border-radius:8px;font-size:15px;white-space:pre-wrap}
+details.q .tag{font-size:12px;color:var(--mut);font-weight:500}
+.empty{color:var(--mut);padding:8px 0}
+.foot{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
+.note{font-size:13px;color:var(--mut);margin-top:10px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+details.pj{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 18px;margin-bottom:14px}
+details.pj>summary{cursor:pointer;list-style:none;padding:16px 0;display:block}
+details.pj>summary::-webkit-details-marker{display:none}
+details.pj[open]>summary{border-bottom:1px solid var(--line);margin-bottom:12px}
+details.pj h2{font-size:17px;margin:6px 0 2px}
+details.pj .body{padding-bottom:14px}
+details.pj h3{font-size:14px;margin:14px 0 4px}
+details.pj p{margin:0 0 4px}
+.ai{background:var(--accsoft);border-radius:8px;padding:10px 14px;margin-top:12px}
+.ai b{display:block;font-size:14px}
+.say{border-left:3px solid var(--acc);padding-left:12px;margin-top:12px;font-style:italic}
+.cert{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.cert h2{font-size:17px;margin:6px 0 4px}
+.cert .meta{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}
+.pill.free{background:#dff3ea;color:var(--ok)}
+.pill.paid{background:#fbeccd;color:var(--warn)}
+.pill.go{background:var(--acc);color:#fff}
+[data-dark]{color-scheme:dark}[data-dark] .pill.free{background:#12332a}[data-dark] .pill.paid{background:#3a2d10}[data-dark] .btn,[data-dark] .pill.go,[data-dark] .chips button[aria-pressed=true],[data-dark] .themes button[aria-pressed=true]{color:var(--bg)}
+.cert ul{margin:6px 0 0;padding-left:20px}
+.cert li{margin:2px 0}
+a.lk{color:var(--acc);font-weight:600}
+.cert select{font:inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);margin-top:10px}
+pre.cs{background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0;white-space:pre}
+.kw{display:flex;gap:6px;flex-wrap:wrap}
+.kw a{border:1px solid var(--line);border-radius:99px;padding:4px 12px;text-decoration:none;color:var(--ink);font-size:14px;background:var(--card)}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.links a{color:var(--acc);font-weight:600}
+.links small{color:var(--mut);display:block;font-weight:400}
+@media(max-width:480px){.links{grid-template-columns:1fr}}
+.fld{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.fld label,.one label{font-size:13px;color:var(--mut);display:block;margin-bottom:2px}
+.fld input,.one input,.one textarea{width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.one{margin-bottom:10px}
+.one textarea{min-height:84px;resize:vertical}
+.chk li{list-style:none;margin:3px 0}
+.chk ul{padding:0;margin:8px 0 0}
+.ok{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
+#rpage{background:#fff;color:#111;font:14px/1.45 Arial,Helvetica,sans-serif;padding:28px 32px;border:1px solid var(--line);border-radius:4px;overflow-wrap:anywhere}
+#rpage h1{font-size:24px;margin:0;color:#111;letter-spacing:0}
+#rpage .ct{margin:2px 0 8px;font-size:13px;color:#333}
+#rpage h2{font-size:13px;margin:14px 0 4px;padding-bottom:2px;border-bottom:1.5px solid #111;color:#111}
+#rpage p{margin:0 0 4px}
+#rpage ul{margin:2px 0 6px;padding-left:18px}
+#rpage li{margin:1px 0}
+#rpage .pr{display:flex;justify-content:space-between;gap:8px;font-weight:700}
+#rpage .pr span{font-weight:400;font-size:13px}
+#rpage mark{background:#fff3a6;color:#111}
+.match span{display:inline-block;margin:2px 4px 2px 0;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:600}
+.match .y{background:#dff3ea;color:#16825d}.match .n{background:#fbeccd;color:#8a5a10}
+@media print{@page{margin:14mm}body{background:#fff;padding:0}header,nav,.foot,.noprint,main>p.note,main>section:not(#t-resume){display:none!important}#t-resume>*:not(.rwrap){display:none!important}.rwrap{border:0!important;padding:0!important;margin:0!important;background:#fff!important}#rpage{border:0;padding:0;font-size:12px}}
+@media(max-width:480px){#rpage{padding:18px 16px}.fld{grid-template-columns:1fr}}
+.themes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.themes button{font:inherit;font-size:14px;padding:5px 12px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);cursor:pointer}
+.themes button[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+.jp{display:none;font-size:13px;color:var(--acc);font-weight:800;margin-left:8px}
+:root:not([data-theme=light]):not([data-theme=dark]) .jp{display:inline}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{position:relative;z-index:2}
+.mas{display:flex;gap:14px;align-items:center}
+.mas>button{background:none;border:0;padding:0;cursor:pointer;flex:none}
+.bubble{flex:1;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:15px}
+.bubble b{display:block;margin-bottom:2px}
+.xp{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:6px 0}
+.xp i{display:block;height:100%;background:var(--ok);transition:width .5s}
+.bg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bd{text-align:center;padding:10px 6px;border-radius:10px;background:var(--bg);font-size:13px}
+.bd .e{font-size:26px;display:block}
+.bd small{color:var(--mut);display:block;line-height:1.3}
+.bd.lock{opacity:.4;filter:grayscale(1)}
+.tm{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;margin:0 12px 0 0}
+.rowf{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(30px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;z-index:50;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:40}
+.pt{position:fixed;pointer-events:none;z-index:1;opacity:.8}
+.pt.petal{top:-20px;background:#ffb3d6;border-radius:100% 0 100% 0;animation:fall linear infinite}
+.pt.leaf{top:-20px;background:#7fbf7a;border-radius:0 100% 0 100%;animation:fall linear infinite}
+.pt.bubble{bottom:-30px;border:2px solid rgba(160,230,240,.6);background:rgba(160,230,240,.12);border-radius:50%;animation:rise linear infinite}
+@keyframes rise{from{transform:translate(0,0)}to{transform:translate(24px,-112vh)}}
+@keyframes fall{from{transform:translate(0,-5vh) rotate(0)}to{transform:translate(60px,108vh) rotate(420deg)}}
+[data-theme=anime] body{background:linear-gradient(160deg,#ffe9f6 0%,#efe8ff 55%,#e3f1ff 100%) fixed;font-family:"M PLUS Rounded 1c","Plus Jakarta Sans",system-ui,sans-serif}
+[data-theme=anime] main{position:relative;z-index:2}
+[data-theme=anime] h1{color:#d92f8f}
+[data-theme=anime] .card,[data-theme=anime] .cert,[data-theme=anime] details.pj{border:2px solid var(--line);border-radius:18px;box-shadow:4px 4px 0 #f7bfdc}
+[data-theme=anime] .btn,[data-theme=anime] .themes button{border-radius:99px}
+[data-theme=anime] .btn{box-shadow:2px 3px 0 #9c1f6a}
+[data-theme=anime] nav button[aria-selected=true]{background:var(--accsoft);border-radius:12px 12px 0 0}
+[data-theme=anime] .bar i,[data-theme=anime] .mini i,[data-theme=anime] .xp i{background:linear-gradient(90deg,#ff7ac3,#7aa7ff)}
+[data-theme=anime] .bubble{border:2px dashed var(--line);background:#fff}
+@media(prefers-reduced-motion:reduce){.pt{display:none}#toast{transition:none}}
+@media print{#toast,#cf,.pt{display:none!important}body{background:#fff!important}.rwrap{box-shadow:none!important}}
+@media(max-width:480px){.mas{flex-direction:column;align-items:flex-start}.bg{grid-template-columns:repeat(2,1fr)}}
+:root[data-theme=safari]{--bg:#eef5ea;--card:#fffef9;--ink:#1f3324;--mut:#587058;--line:#cfe0c8;--acc:#2a7547;--accsoft:#dcefd9;--ok:#2a7547;--warn:#a8741a;--bad:#b4462f}
+:root[data-theme=ocean]{--bg:#0a1f2e;--card:#0f2d42;--ink:#e3f4fb;--mut:#8fb5c8;--line:#1d4560;--acc:#3ed0d6;--accsoft:#12384f;--ok:#4cd6a4;--warn:#f0c060;--bad:#ff9a7a}
+:root[data-theme=sunset]{--bg:#fff3e8;--card:#fffdfb;--ink:#3a1f33;--mut:#85586c;--line:#f4d2bf;--acc:#c9431f;--accsoft:#ffe3d3;--ok:#25805f;--warn:#a8691a;--bad:#bb3a2c}
+:root[data-theme=arcade]{--bg:#12102b;--card:#1c1842;--ink:#f4f1ff;--mut:#aaa4d8;--line:#3a3380;--acc:#ffd23f;--accsoft:#2c2760;--ok:#3ef2a0;--warn:#ffb347;--bad:#ff6b8a}
+[data-theme=safari] body{background:linear-gradient(170deg,#eef5ea,#e4efd9 60%,#f6efd8) fixed}
+[data-theme=safari] .card,[data-theme=safari] .cert,[data-theme=safari] details.pj{border-radius:14px;box-shadow:0 3px 0 #cfe0c8}
+[data-theme=safari] h1{color:#2a7547}
+[data-theme=ocean] body{background:linear-gradient(180deg,#0a1f2e,#0c3350 70%,#0e4560) fixed}
+[data-theme=ocean] .card,[data-theme=ocean] .cert,[data-theme=ocean] details.pj{border-radius:14px;box-shadow:0 0 0 1px #1d4560,0 8px 20px rgba(0,0,0,.25)}
+[data-theme=ocean] h1{color:#3ed0d6}
+[data-theme=sunset] body{background:linear-gradient(180deg,#fff0df,#ffe1e6 55%,#efe4ff) fixed}
+[data-theme=sunset] .card,[data-theme=sunset] .cert,[data-theme=sunset] details.pj{border-radius:16px;box-shadow:0 8px 20px rgba(201,67,31,.12)}
+[data-theme=sunset] h1{color:#c9431f}
+[data-theme=sunset] .bar i,[data-theme=sunset] .mini i,[data-theme=sunset] .xp i{background:linear-gradient(90deg,#ff8a4c,#d9457a)}
+[data-theme=arcade] body{background:#12102b}
+[data-theme=arcade] h1{font:400 18px/1.5 "Press Start 2P",monospace;color:#ffd23f;margin-bottom:8px}
+[data-theme=arcade] h2{font:400 12px/1.6 "Press Start 2P",monospace}
+[data-theme=arcade] nav button{font:400 10px/1.4 "Press Start 2P",monospace;padding:12px 10px}
+[data-theme=arcade] .card,[data-theme=arcade] .cert,[data-theme=arcade] details.pj,[data-theme=arcade] .stat,[data-theme=arcade] .next,[data-theme=arcade] .bubble{border-radius:0}
+[data-theme=arcade] .card,[data-theme=arcade] .cert,[data-theme=arcade] details.pj{border:3px solid var(--line);box-shadow:5px 5px 0 #000}
+[data-theme=arcade] .btn{border-radius:0;box-shadow:0 4px 0 #a88400}
+[data-theme=arcade] .themes button,[data-theme=arcade] .pill,[data-theme=arcade] .chips button{border-radius:0}
+[data-theme=arcade] .bar,[data-theme=arcade] .mini,[data-theme=arcade] .xp,[data-theme=arcade] .mini i,[data-theme=arcade] .xp i{border-radius:0}
+[data-theme=arcade] .bar i{background:#3ef2a0}[data-theme=arcade] .xp i,[data-theme=arcade] .mini i{background:#3ef2a0}
+@media(max-width:480px){form.add{grid-template-columns:1fr}.row{grid-template-columns:1fr auto}.row .x{grid-row:1;grid-column:2}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Analyst Track<span class="jp" id="tag"></span></h1>
+  <p class="sub">One goal: a data analyst job. SQL, Power BI, projects, applications. Nothing else.</p>
+  <div class="themes" role="group" aria-label="Theme"><button data-theme-btn="light">☀️ Light</button><button data-theme-btn="dark">🌙 Dark</button><button data-theme-btn="anime">🌸 Anime</button><button data-theme-btn="safari">🌿 Safari</button><button data-theme-btn="ocean">🌊 Ocean</button><button data-theme-btn="sunset">🌅 Sunset</button><button data-theme-btn="arcade">🕹️ Arcade</button></div>
+</header>
+<nav role="tablist" id="tabs"></nav>
+
+<section id="t-today"></section>
+<section id="t-plan" hidden></section>
+<section id="t-proj" hidden></section>
+<section id="t-certs" hidden></section>
+<section id="t-kit" hidden></section>
+<section id="t-resume" hidden></section>
+<section id="t-apps" hidden></section>
+<section id="t-prep" hidden></section>
+
+<div class="foot">
+  <button class="btn ghost" id="exp">Download backup</button>
+  <button class="btn ghost" id="imp">Restore backup</button>
+  <button class="btn ghost" id="rst">Reset everything</button>
+  <input type="file" id="file" accept="application/json" hidden>
+</div>
+<p class="note">Progress is saved in this browser only. Download a backup now and then, and use the same browser and device each time. The backup includes her resume details, so keep it private.</p>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="cf" aria-hidden="true"></canvas>
+
+<script>
+const PLAN=[
+{t:"SQL",w:"Weeks 1–4",g:"Write joins and aggregations without looking up the syntax.",k:[
+"SELECT, WHERE, ORDER BY, LIMIT",
+"GROUP BY, HAVING and aggregate functions",
+"INNER and LEFT JOIN on two or three tables",
+"Subqueries and CTEs (WITH)",
+"CASE WHEN and date functions",
+"Window functions: ROW_NUMBER, RANK, running totals",
+"Solve 40 easy and medium SQL problems (HackerRank, LeetCode)",
+"Earn the HackerRank SQL (Basic) certificate"]},
+{t:"Excel and Power Query",w:"Weeks 3–5",g:"Clean a messy file and summarise it in under 30 minutes.",k:[
+"Pivot tables and slicers",
+"XLOOKUP, INDEX/MATCH, SUMIFS, COUNTIFS",
+"Clean data with Power Query (split, merge, unpivot, change types)",
+"Build one Excel dashboard from raw data"]},
+{t:"Power BI and DAX",w:"Weeks 4–9",g:"Build a clean report on a star schema and explain every measure.",k:[
+"Star schema, relationships, one-to-many",
+"Measures vs calculated columns",
+"CALCULATE and FILTER",
+"Time intelligence: YTD, previous year, month-on-month",
+"Row-level security basics",
+"Publish a report to Power BI Service",
+"Finish the Microsoft Learn PL-300 learning path",
+"Pass the free practice assessment above 80%",
+"Take the PL-300 exam"]},
+{t:"Python basics (light)",w:"Weeks 6–8",g:"Load a CSV, filter, group and plot with pandas.",k:[
+"Read a CSV into pandas",
+"Filter, sort, groupby, merge",
+"Handle missing values and duplicates",
+"One chart with matplotlib or seaborn"]},
+{t:"Portfolio",w:"Weeks 4–12",g:"Three projects, each with a problem, a dashboard and written insights.",k:[
+"Finish Project 1 (retail sales) from the Projects tab",
+"Finish Project 2 (the automated weekly report) from the Projects tab",
+"Finish Project 3 (AI accuracy log) from the Projects tab",
+"Write a one-page summary for each project: problem, method, 3 insights",
+"Publish the dashboards and put links on GitHub and LinkedIn"]},
+{t:"Profile and resume",w:"Weeks 6–8",g:"A recruiter understands her pitch in ten seconds.",k:[
+"LinkedIn headline: Data Analyst | SQL | Power BI | Excel",
+"One-page resume with projects first and numbers in every bullet",
+"Add the zoology + MCA story to the summary",
+"Add one line: I use AI tools to write and debug queries, then verify the results",
+"Ask two people to review the resume"]},
+{t:"Job hunt",w:"From week 8",g:"A steady flow of applications and follow-ups.",k:[
+"Apply to 5 jobs a day on LinkedIn, Naukri, Indeed and Foundit",
+"Message 5 analysts or recruiters a week with a short, polite note",
+"Apply to MIS, reporting, BI and junior analyst roles, not just the title Data Analyst",
+"Do 3 mock interviews",
+"Review rejections or silence every two weeks and adjust"]}];
+
+const DAILY=["SQL practice (45 min)","Power BI or Excel work (45 min)","Project work (60 min)","Send 5 applications or messages"];
+
+const QS=[
+["SQL","What is the difference between INNER JOIN and LEFT JOIN?","INNER JOIN returns only rows with a match in both tables. LEFT JOIN returns all rows from the left table, plus matching rows from the right; unmatched right-side columns are NULL."],
+["SQL","WHERE vs HAVING?","WHERE filters rows before grouping. HAVING filters groups after aggregation, e.g. HAVING COUNT(*) > 5."],
+["SQL","Find the second highest salary.","SELECT MAX(salary) FROM emp WHERE salary < (SELECT MAX(salary) FROM emp);\nOr use DENSE_RANK() OVER (ORDER BY salary DESC) and pick rank 2."],
+["SQL","What is a CTE and when do you use it?","A named temporary result set defined with WITH. It makes long queries readable and lets you reuse the same step in the query."],
+["SQL","ROW_NUMBER vs RANK vs DENSE_RANK?","ROW_NUMBER gives unique numbers. RANK gives ties the same number and skips the next ones (1,1,3). DENSE_RANK gives ties the same number without gaps (1,1,2)."],
+["SQL","How do you find duplicate rows?","SELECT col, COUNT(*) FROM t GROUP BY col HAVING COUNT(*) > 1;"],
+["Excel","VLOOKUP vs XLOOKUP?","XLOOKUP can look left, defaults to exact match, returns a custom value when nothing is found, and does not break when columns are inserted. VLOOKUP needs a column index and only looks right."],
+["Excel","How would you clean a messy dataset in Excel?","Remove duplicates, trim spaces, fix data types, handle blanks, standardise text, and do it in Power Query so the steps repeat when new data arrives."],
+["Power BI","Calculated column vs measure?","A calculated column is computed row by row at refresh and stored in the model. A measure is computed at query time based on filter context and doesn’t add stored data. Use measures for aggregations."],
+["Power BI","What is filter context?","The set of filters (slicers, visual axes, page filters) applied when a measure is evaluated. CALCULATE can change it."],
+["Power BI","Import vs DirectQuery?","Import loads a compressed copy into the model: fast, but needs refresh. DirectQuery queries the source live: fresher data, but slower and with some DAX limits."],
+["Power BI","Why use a star schema?","One fact table linked to small dimension tables gives faster performance, simpler DAX and fewer relationship ambiguities."],
+["Power BI","How do you calculate year-over-year growth?","Create a base measure, e.g. Sales = SUM(Sales[Amount]). Then PY = CALCULATE([Sales], SAMEPERIODLASTYEAR('Date'[Date])) and growth = DIVIDE([Sales]-[PY],[PY]). Use a proper date table."],
+["Analytics","Sales dropped 15% last month. How would you investigate?","Confirm the data is correct. Then break it down by product, region, channel, customer type and time. Compare with the previous period and last year. Look for one segment driving most of the drop, then suggest a next step."],
+["Analytics","Walk me through one of your projects.","Use this order: the business question, the data and its problems, what you did, the 3 key insights, and what action you would recommend. Keep it under two minutes."],
+["Analytics","How do you handle missing values?","First understand why they are missing. Then remove, fill (mean, median, a default) or flag them, depending on how much is missing and how it affects the analysis. Always say what you did."],
+["Statistics","Mean vs median. When do you use each?","Mean is the average and is pulled by extreme values. Median is the middle value and is not. Use median for skewed data such as salaries or order values."],
+["Statistics","Correlation vs causation?","Correlation means two things move together. Causation means one produces the other. Ice cream sales and heat are correlated, but sales don’t cause heat. Use experiments or controlled comparisons to claim causation."],
+["Statistics","How do you spot and handle outliers?","Use a box plot, percentiles or the 1.5×IQR rule. Check whether it is a data error or a real extreme value. Fix errors, keep real values, and report results with and without them if they matter."],
+["Statistics","What is an A/B test?","Two versions (A and B) are shown to similar random groups, and a metric such as conversion is compared. A significance test checks whether the difference is likely real or just chance."],
+["Python","merge vs concat in pandas?","merge joins tables on keys, like a SQL join. concat stacks tables on top of each other (rows) or side by side (columns)."],
+["Python","loc vs iloc?","loc selects by label (row index values and column names). iloc selects by integer position."],
+["Power BI","Slicer vs filter?","A slicer is a visible control that users click to filter. Filters in the filter pane are set by the report author at visual, page or report level and are not always visible."],
+["Power BI","What is row-level security?","It restricts which rows a user can see, using roles with DAX filters. For example, a regional manager sees only their own region’s data."],
+["Analytics","How do you choose KPIs for a dashboard?","Start from the decision the viewer needs to make. Pick a few measures tied to that goal, show trend and comparison to target, and drop anything nobody would act on."],
+["Behavioural","You are from a zoology background. Why analytics?","I enjoy finding patterns in data, and my degree trained me in research, observation and drawing conclusions. MCA gave me the technical base, and I have since built projects in SQL and Power BI."],
+["Behavioural","How do you use AI tools in your work?","I use them to draft SQL and DAX, explain errors and speed up repetitive work. I always test the output on a small sample and check it against the data before using it."]];
+
+const PROJ=[
+{t:"Retail sales and profit: where is the money leaking?",lv:"Start here",
+ p:"A retail manager wants to know which products, regions and discounts are hurting profit, and what to change next quarter.",
+ d:"Search Kaggle for “Superstore sales dataset”.",tools:"SQL, Power Query, Power BI, DAX",
+ k:["Load the data into SQLite or MySQL and write 10 business questions as SQL queries","Clean and model it as a star schema in Power BI (fact table plus date, product, customer, region)","Write DAX measures: Sales, Profit, Margin %, YoY growth, Top N products","Build a 3-page report: overview, products, regions","Find 3 insights backed by numbers, e.g. a discount band that loses money","Publish it, add a README (problem, method, insights) and a one-page summary"],
+ ai:"Use ChatGPT or Claude to draft DAX and an executive summary of your findings. Keep a short list of what the AI got wrong and how you fixed it.",
+ say:"“I found that [segment] was losing money because of [reason], and I recommended [action].”"},
+{t:"Automated weekly sales report",lv:"Automation",
+ p:"Managers waste hours building the Monday report by hand. Make it refresh and arrive in their inbox on its own.",
+ d:"Reuse the Project 1 dataset, stored as a file on OneDrive or SharePoint.",tools:"Power BI Service, Power Automate, Excel, AI for commentary",
+ k:["Publish the Project 1 report to Power BI Service","Set a scheduled refresh (use a OneDrive or SharePoint file so no gateway is needed)","Define 4 KPIs for the weekly summary: sales, profit, margin, top product","Build a Power Automate flow: Monday morning trigger, collect the KPIs, send an email with the report link","Add an AI-written commentary paragraph to the email (an AI step if available, otherwise a saved prompt)","Document the flow with screenshots and a diagram: trigger, data, AI step, email","Record a 60-second screen video of it working"],
+ ai:"Let AI draft the two-line commentary from the KPI numbers, then add a rule that a human checks it before sending. Explain why in interviews.",
+ say:"“I replaced a manual weekly report with a refresh and email flow, and I added a check on the AI-written summary.”",
+ n:"Some Power BI Service and Power Automate features need a work or school account or a trial. If she can’t access them, build the same flow with Excel Power Query plus Power Automate, or document the design with mock screenshots and say so honestly."},
+{t:"AI accuracy log: can I trust AI with data?",lv:"AI skills",
+ p:"A manager asks: “Can we just let AI answer questions about our data?” Test it and give an evidence-based answer.",
+ d:"Reuse the Project 1 dataset. Use sample data only, never confidential data.",tools:"SQL, DAX, Power BI Q&A or Copilot (if available), ChatGPT or Claude",
+ k:["Write 15 business questions of mixed difficulty (simple totals, ratios, time comparisons, tricky filters)","Answer all 15 yourself with SQL or DAX first","Ask an AI tool the same 15 questions and record its answers","Mark each answer right, partly right or wrong, and find the reason for each miss","Make a one-page report: accuracy %, where AI helps, where it fails, and your rules for using it","Publish the table and write-up on GitHub or LinkedIn"],
+ ai:"This project is the AI story. It shows judgement, not just tool use, which is what interviewers look for.",
+ say:"“AI got [x] of 15 right. It struggled with [type], so I always verify against the data before sharing numbers.”"},
+{t:"Wildlife and biodiversity dashboard",lv:"Her edge",
+ p:"A conservation team wants to see which species in a region are most at risk, how sightings changed over the years, and where to focus.",
+ d:"Search GBIF for occurrence data of one animal group in one region, and IUCN Red List summaries for status. Also try data.gov.in.",tools:"Power Query, Power BI (map visuals), Excel",
+ k:["Pick one region and one animal group she knows well, for example birds, reptiles or mammals","Download the data and clean species names, dates and coordinates","Add threat status (Least Concern to Critically Endangered) by merging the two sources","Build a map of sightings and a trend by year and by threat status","Write 3 insights and one recommendation for a conservation team","Publish with a short note on how her zoology background shaped the analysis"],
+ ai:"Ask AI to explain unfamiliar data fields and suggest checks, then verify against the source. Use it to tighten the written insights, not to create them.",
+ say:"“With my zoology background, I could spot that [data issue] was a naming problem, not a real decline.”"},
+{t:"Messy data cleanup and quality scorecard",lv:"Data quality",
+ p:"A team’s data is full of blanks, duplicates and typos. Clean it, prove it is cleaner, and make the checks repeatable.",
+ d:"Download any raw public dataset from data.gov.in or Kaggle that has missing values and inconsistent text.",tools:"Power Query, Power BI, optional pandas",
+ k:["Profile the raw data: count nulls, duplicates, odd values and wrong data types","Clean it in Power Query, with each step named and explained","Build a data-quality page: completeness %, duplicate count and invalid values, before and after","Optional: write a short pandas script that runs the same checks","Write down every cleaning decision and why you made it","Publish before and after versions with the scorecard"],
+ ai:"Ask AI to suggest cleaning rules and Power Query (M) or pandas code, then test each one and keep only what you can explain.",
+ say:"“I cut missing values from [x]% to [y]% and made the cleanup repeatable, so new data gets the same treatment.”"}
+];
+const projDone=pi=>PROJ[pi].k.every((_,i)=>S.proj[ids(pi,i)]);
+const openPj=new Set();
+function renderProj(){
+  const fin=PROJ.filter((_,i)=>projDone(i)).length;
+  $("t-proj").innerHTML=`<div class="card"><h2>Projects: ${fin}/${PROJ.length} finished</h2>
+    <p style="margin:0">Do them in this order: 1, then 2, then 3. Those three show SQL, Power BI, automation and AI judgement. Project 4 is what makes her different from other candidates, and Project 5 shows care for data quality.</p>
+    <p class="note">A project is finished only when it has a published dashboard or file link, a README with problem, method and insights, and a two-minute spoken explanation she can give without notes.</p></div>`+
+  PROJ.map((j,pi)=>{const n=j.k.filter((_,i)=>S.proj[ids(pi,i)]).length;
+  return `<details class="pj" data-pj="${pi}" ${openPj.has(pi)?"open":""}><summary><span class="pill">${esc(j.lv)}</span><h2>${pi+1}. ${esc(j.t)}</h2><small class="sub">${n}/${j.k.length} steps done</small><div class="mini"><i style="width:${n/j.k.length*100}%"></i></div></summary>
+  <div class="body"><h3>Business problem</h3><p>${esc(j.p)}</p>
+  <h3>Data</h3><p>${esc(j.d)}</p>
+  <h3>Tools</h3><p>${esc(j.tools)}</p>
+  <h3>Steps</h3>${j.k.map((k,i)=>{const id=ids(pi,i),on=S.proj[id];return `<label class="ck ${on?"done":""}"><input type="checkbox" data-pstep="${id}" ${on?"checked":""}><span>${esc(k)}</span></label>`}).join("")}
+  <div class="ai"><b>AI and automation angle</b>${esc(j.ai)}</div>
+  <p class="say">${esc(j.say)}</p>
+  ${j.n?`<p class="note">${esc(j.n)}</p>`:""}</div></details>`}).join("");
+}
+
+const CERTS=[
+{id:"hr",n:"HackerRank SQL certificate (Basic, then Intermediate)",cost:"Free",free:1,pr:"Do first",
+ why:"Fast proof of SQL, her biggest gap. Takes a short timed test. Put the profile link on the resume.",
+ link:["Open HackerRank skills","https://www.hackerrank.com/skills-verification"],
+ prep:[["Mode SQL tutorial (free)","https://mode.com/sql-tutorial"],["SQLBolt interactive lessons (free)","https://sqlbolt.com"],["LeetCode database problems (free tier)","https://leetcode.com/problemset/database/"]]},
+{id:"pl300",n:"Microsoft Certified: Power BI Data Analyst Associate (exam PL-300)",cost:"About ₹4,865 in India (US$165 elsewhere)",free:0,pr:"Top priority",
+ why:"The one Power BI credential Microsoft issues, and the best-known badge for her target roles. 100 minutes, pass mark 700 out of 1,000. Valid for 12 months, then a free online renewal each year. Every retake is paid, so take the free practice assessment first and book only when she scores well.",
+ link:["Official PL-300 page and price","https://learn.microsoft.com/en-gb/certifications/exams/pl-300"],
+ prep:[["Free: the learning path and free practice assessment on the official page above",""],["Free: build Projects 1 to 3 in this app; the exam rewards hands-on skill",""],["Coursera Microsoft Power BI Data Analyst Professional Certificate: one source reports a 50% exam voucher at the end, so check the page before paying",""],["Paid practice tests on Udemy (often ₹500 to ₹3,000 on sale)","https://www.udemy.com"],["Book: Exam Ref PL-300 by Daniil Maslyuk",""]],
+ note:"Microsoft’s student discount does not apply in India, so don’t wait for one. Prices change with currency and tax; confirm on the exam page."},
+{id:"ai901",n:"Microsoft Certified: Azure AI Fundamentals (exam AI-901)",cost:"About US$99, roughly ₹3,700 in India",free:0,pr:"Optional, after PL-300",
+ why:"Shows basic AI literacy with no coding. Correction to my earlier advice: AI-900 retired on 30 June 2026, and AI-901 is now the exam for this certificate. Don’t buy AI-900 study material.",
+ link:["Official certification page","https://learn.microsoft.com/certifications/azure-ai-fundamentals"],
+ prep:[["Free Microsoft Learn study path linked on the official page",""]],
+ note:"The India price is an estimate from the fundamentals-tier fee. Check the exam page before booking."},
+{id:"kag",n:"Kaggle Learn certificates (SQL, Pandas, Data Visualization)",cost:"Free",free:1,pr:"Free boost",
+ why:"Short, hands-on courses that give free completion certificates. Good for light Python without heavy theory.",
+ link:["Open Kaggle Learn","https://www.kaggle.com/learn"],prep:[]},
+{id:"fcc",n:"freeCodeCamp: Data Analysis with Python",cost:"Free",free:1,pr:"Free boost",
+ why:"A free certificate that builds pandas basics through projects. Do it only after SQL and Power BI are comfortable.",
+ link:["Open freeCodeCamp","https://www.freecodecamp.org/learn"],prep:[]},
+{id:"ibm",n:"IBM SkillsBuild free data and AI credentials",cost:"Free",free:1,pr:"Free boost",
+ why:"Free digital badges and learning paths. They add small proof of learning but employers value them less than PL-300 and projects.",
+ link:["Open IBM SkillsBuild","https://skillsbuild.org"],prep:[]},
+{id:"gda",n:"Google Data Analytics Professional Certificate (Coursera)",cost:"US$49 a month globally; India pricing varies, so check the page. Financial aid can make it free",free:0,pr:"Optional",
+ why:"A structured path through spreadsheets, SQL, Tableau and R, over about six months. Useful only if she wants guided structure. It teaches Tableau and R, not Power BI, so it is not a replacement for PL-300.",
+ link:["Open the Coursera page","https://www.coursera.org/professional-certificates/google-data-analytics"],
+ prep:[],note:"For financial aid, apply on the course page before starting any free trial. Reviews take about 15 days."},
+{id:"dp600",n:"Microsoft Certified: Fabric Analytics Engineer Associate (exam DP-600)",cost:"About US$165, India price on the exam page",free:0,pr:"Later, after a job",
+ why:"The next step after PL-300 for analysts working with Microsoft Fabric. Needs strong SQL and DAX, so it is not for the first three months.",
+ link:["Official certification page","https://learn.microsoft.com/en-us/credentials/certifications/fabric-analytics-engineer-associate/"],prep:[]},
+{id:"nptel",n:"NPTEL data analytics courses (Indian institutes)",cost:"Free to learn; the proctored certificate exam has a small fee",free:1,pr:"Optional",
+ why:"Courses from IITs with an optional proctored exam. Recognised in India, but heavier on theory and statistics.",
+ link:["Open NPTEL","https://nptel.ac.in"],prep:[]}
+];
+const CST=["Not started","Studying","Exam booked","Earned"];
+let cf="All";
+function renderCerts(){
+  const list=CERTS.filter(c=>cf==="All"||(cf==="Free"?c.free:!c.free));
+  const earned=CERTS.filter(c=>S.cert[c.id]==="Earned").length;
+  $("t-certs").innerHTML=`<div class="card"><h2>Certificates: ${earned} earned</h2>
+    <p style="margin:0">Smart plan: start with the free ones, then pay for one exam, PL-300. That single paid exam is enough. Everything else is optional.</p>
+    <p class="note">Prices were checked in November 2026 from public pages and change often. Always confirm on the official page before paying.</p>
+    <div class="chips" style="margin:12px 0 0">${["All","Free","Paid"].map(c=>`<button data-cf="${c}" aria-pressed="${c===cf}">${c}</button>`).join("")}</div></div>`+
+  list.map(c=>`<div class="cert"><div class="meta"><span class="pill ${c.free?"free":"paid"}">${c.free?"Free":"Paid"}</span><span class="pill ${c.pr==="Top priority"||c.pr==="Do first"?"go":""}">${esc(c.pr)}</span></div>
+    <h2>${esc(c.n)}</h2><p style="margin:0"><b>Cost:</b> ${esc(c.cost)}</p><p style="margin:6px 0 0">${esc(c.why)}</p>
+    <p style="margin:8px 0 0"><a class="lk" href="${c.link[1]}" target="_blank" rel="noopener">${esc(c.link[0])}</a></p>
+    ${c.prep.length?`<h3 style="font-size:14px;margin:12px 0 0">How to prepare</h3><ul>${c.prep.map(x=>`<li>${x[1]?`<a class="lk" href="${x[1]}" target="_blank" rel="noopener">${esc(x[0])}</a>`:esc(x[0])}</li>`).join("")}</ul>`:""}
+    ${c.note?`<p class="note">${esc(c.note)}</p>`:""}
+    <select data-cert="${c.id}" aria-label="Status for ${esc(c.n)}">${CST.map(x=>`<option ${(S.cert[c.id]||CST[0])===x?"selected":""}>${x}</option>`).join("")}</select></div>`).join("");
+}
+
+const KW=["Data Analyst","Junior Data Analyst","Power BI Developer","BI Analyst","Reporting Analyst","MIS Executive","Business Analyst","Data Analyst Trainee","Analytics Associate","Operations Analyst"];
+const LINKS=[
+["Learn and practise",[["Alex The Analyst (YouTube)","https://www.youtube.com/@AlexTheAnalyst","Free SQL, Power BI and portfolio videos"],["Mode SQL tutorial","https://mode.com/sql-tutorial","Free, from basic to advanced"],["W3Schools SQL","https://www.w3schools.com/sql/","Quick syntax reference"],["Maven Analytics","https://mavenanalytics.io","Free data challenges and courses"],["Kaggle Learn","https://www.kaggle.com/learn","Short free courses"],["Power BI Desktop","https://powerbi.microsoft.com/desktop","Free download for Windows"]]],
+["Datasets for projects",[["Kaggle datasets","https://www.kaggle.com/datasets","Sales, churn, health and more"],["data.gov.in","https://data.gov.in","Indian government open data"],["GBIF","https://www.gbif.org","Species sighting data"],["IUCN Red List","https://www.iucnredlist.org","Species threat status"]]],
+["Job portals and research",[["LinkedIn Jobs","https://www.linkedin.com/jobs","Apply and message people"],["Naukri","https://www.naukri.com","Largest Indian portal"],["Indeed India","https://in.indeed.com","Wide listings"],["foundit","https://www.foundit.in","Fresher listings"],["Internshala","https://internshala.com","Internships and fresher jobs"],["Wellfound","https://wellfound.com","Startup roles"],["AmbitionBox","https://www.ambitionbox.com","Salary ranges and company reviews"]]]];
+const TPL=[
+["LinkedIn headline","Data Analyst | SQL · Power BI · Excel | MCA 2025 | Turning data into decisions"],
+["LinkedIn About section","I am a data analyst with an MCA (2025) and a zoology background, which taught me to ask careful questions and trust evidence. I work with SQL, Power BI and Excel to clean data, build dashboards and explain what the numbers mean in plain language.\n\nRecent work: [Project 1 in one line], [Project 2 in one line], [Project 3 in one line].\n\nI am looking for an entry-level data analyst or BI role where I can [what you want to do]. Open to opportunities in [cities or remote]."],
+["Resume summary (3 lines)","Data analyst fresher (MCA 2025) skilled in SQL, Power BI, DAX and Excel. Built [number] end-to-end projects, including an automated weekly report and an AI accuracy study. Background in zoology gives a research mindset and strong attention to data quality."],
+["Resume project bullet formula","Action verb + what you built + tools + result with a number.\n\nExample: Built a Power BI sales dashboard on 10,000+ orders using SQL and DAX, and found that discounts above 30% turned profit negative, leading to a recommended discount cap."],
+["Message to an analyst or recruiter","Hi [Name], I’m [Your name], a 2025 MCA graduate building a data analyst career with SQL and Power BI. I liked your post or work on [specific thing]. Could I ask one question about how you started in analytics? Thank you for your time."],
+["Referral request","Hi [Name], I saw an opening for [role] at [company]. I have built projects in SQL and Power BI (link: [portfolio link]). If you think I’m a fit, could you refer me or point me to the right person? Happy to share my resume. Thank you."],
+["Follow-up after applying (one week later)","Hi [Name], I applied for [role] on [date] and am very interested. My portfolio shows [one relevant project]. I’d be glad to share more about my work if useful. Thank you for your time."],
+["Thank-you after an interview","Hi [Name], thank you for speaking with me today about the [role]. I enjoyed discussing [specific topic]. I’m keen to contribute and happy to answer any other questions."],
+["“Tell me about yourself” (30 seconds)","I did my MCA after a zoology degree, so I combine research thinking with technical skills. I work mainly in SQL and Power BI, and I have built projects such as [project], where I found [insight]. I’m looking for an analyst role where I can turn data into decisions."]];
+const CHEAT=[
+["SQL quick reference",`SELECT region, SUM(sales) AS total
+FROM orders o
+JOIN customers c ON c.id = o.customer_id
+WHERE order_date >= '2025-01-01'
+GROUP BY region
+HAVING SUM(sales) > 10000
+ORDER BY total DESC
+LIMIT 10;
+
+-- CTE
+WITH monthly AS (
+  SELECT strftime('%Y-%m', order_date) AS m, SUM(sales) AS s
+  FROM orders GROUP BY m)
+SELECT * FROM monthly;
+
+-- Window function
+SELECT *, RANK() OVER (PARTITION BY region ORDER BY sales DESC) AS rnk
+FROM orders;
+
+-- CASE WHEN
+CASE WHEN profit < 0 THEN 'Loss' ELSE 'Profit' END`],
+["DAX quick reference",`Total Sales = SUM(Sales[Amount])
+Profit Margin = DIVIDE([Total Profit], [Total Sales])
+Sales YTD = TOTALYTD([Total Sales], 'Date'[Date])
+Sales PY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))
+YoY % = DIVIDE([Total Sales] - [Sales PY], [Sales PY])
+Big Orders = CALCULATE([Total Sales], Sales[Amount] > 1000)
+Top 5 Rank = RANKX(ALL(Product[Name]), [Total Sales])
+Customers = DISTINCTCOUNT(Sales[CustomerID])`],
+["Excel and Power Query",`XLOOKUP(A2, Table[ID], Table[Name], "Not found")
+SUMIFS(Sales, Region, "East", Month, "Jan")
+COUNTIFS(Status, "Open", Owner, "Asha")
+IFERROR(value, "")
+TEXT(A2, "mmm-yyyy")
+
+Power Query steps: Use first row as headers, change type, trim text,
+remove duplicates, replace errors, split column, unpivot columns, merge queries.`],
+["pandas quick reference",`import pandas as pd
+df = pd.read_csv("file.csv")
+df.info(); df.describe(); df.isna().sum()
+df = df.drop_duplicates()
+df["date"] = pd.to_datetime(df["date"])
+df[df["sales"] > 1000]
+df.groupby("region")["sales"].sum().sort_values(ascending=False)
+pd.merge(a, b, on="id", how="left")
+df.plot(kind="bar")`]];
+let copied=-1;
+function renderKit(){
+  const q=encodeURIComponent;
+  $("t-kit").innerHTML=`<div class="card"><h2>Job search keywords</h2><p class="note" style="margin-top:0">Many entry roles aren’t titled Data Analyst. Search all of these on LinkedIn.</p>
+    <div class="kw">${KW.map(k=>`<a href="https://www.linkedin.com/jobs/search/?keywords=${q(k)}&location=India" target="_blank" rel="noopener">${esc(k)}</a>`).join("")}</div></div>
+  <div class="card"><h2>Copy-ready templates</h2><p class="note" style="margin-top:0">Replace everything in [brackets] with real details. Never copy a template word for word.</p>
+    ${TPL.map((t,i)=>`<details class="q"><summary><span>${esc(t[0])}</span></summary><div class="a">${esc(t[1])}</div><button class="btn ghost" data-copy="${i}" style="margin-top:6px">${copied===i?"Copied":"Copy text"}</button></details>`).join("")}</div>
+  <div class="card"><h2>Cheat sheets</h2>
+    ${CHEAT.map(c=>`<details class="q"><summary><span>${esc(c[0])}</span></summary><pre class="cs">${esc(c[1])}</pre></details>`).join("")}</div>`+
+  LINKS.map(g=>`<div class="card"><h2>${esc(g[0])}</h2><div class="links">${g[1].map(l=>`<div><a href="${l[1]}" target="_blank" rel="noopener">${esc(l[0])}</a><small>${esc(l[2])}</small></div>`).join("")}</div></div>`).join("")+
+  `<div class="card"><h2>Rules that save time</h2><ul style="margin:0;padding-left:20px">
+    <li>Never pay anyone for a guaranteed job or placement.</li><li>A real employer never asks a candidate for money to apply or interview.</li>
+    <li>Check salary ranges and reviews on AmbitionBox before an interview.</li><li>Keep one master resume, and tailor the top three lines for each job.</li>
+    <li>Apply within the first days a job is posted, since early applicants get more attention.</li></ul></div>`;
+}
+
+const RN=["Retail Sales and Profit Analysis","Automated Weekly Sales Report","AI Accuracy Log for Data Questions","Wildlife and Biodiversity Dashboard","Data Cleanup and Quality Scorecard"];
+const RC={hr:"HackerRank SQL Certificate (Basic/Intermediate)",pl300:"Microsoft Certified: Power BI Data Analyst Associate (PL-300)",ai901:"Microsoft Certified: Azure AI Fundamentals (AI-901)",kag:"Kaggle Learn Certificates (SQL, Pandas, Data Visualization)",fcc:"freeCodeCamp: Data Analysis with Python",ibm:"IBM SkillsBuild Data and AI Credentials",gda:"Google Data Analytics Professional Certificate",dp600:"Microsoft Certified: Fabric Analytics Engineer Associate (DP-600)",nptel:"NPTEL Data Analytics Certificate"};
+const SK=[["SQL (joins, CTEs, window functions)","SQL"],["Excel (pivot tables, XLOOKUP, Power Query)","Excel"],["Power BI, DAX, data modelling","Power BI and DAX"],["Python (pandas, matplotlib)","Python"]];
+const KWL=["sql","power bi","dax","excel","power query","python","pandas","tableau","looker","dashboard","kpi","data modeling","data modelling","etl","data cleaning","data visualization","data visualisation","statistics","reporting","stakeholder","power automate","automation","azure","fabric","copilot","mis","a/b testing","snowflake","bigquery","vba","forecasting","regression","machine learning","storytelling","communication","data analysis","business intelligence"];
+const RF=[["name","Full name"],["email","Email"],["phone","Phone"],["city","City"],["l1","LinkedIn URL"],["l2","GitHub or portfolio URL"]];
+const R=()=>S.res;
+function ph(x,t){return x&&x.trim()?x.trim():t}
+function stripDot(x){return x.replace(/[.\s]+$/,"")}
+function resModel(){
+  const r=R(),sk=[],sh=[];
+  PLAN.forEach((_,i)=>{const st=phaseStats(i);if(SK[i]&&st.d/st.n>=0.6){sk.push(SK[i][0]);sh.push(SK[i][1])}});
+  if(projDone(1))sk.push("Power Automate, scheduled refresh, report automation");
+  if(projDone(2))sk.push("AI-assisted analytics with output verification");
+  (r.xs||"").split(",").map(x=>x.trim()).filter(Boolean).forEach(x=>sk.push(x));
+  const projects=[];
+  PROJ.forEach((j,pi)=>{if(!projDone(pi))return;const q=S.pres[pi]||{};
+    const b=[`Built ${RN[pi]} using ${j.tools} on ${ph(q.s,"[data size, e.g. 10,000 rows]")}.`,ph(q.f,"[key finding with a number]"),ph(q.r,"[result or recommendation]")].map(x=>{x=stripDot(x);return x.charAt(0).toUpperCase()+x.slice(1)+"."});
+    projects.push({name:RN[pi],link:(q.l||"").trim(),bullets:b})});
+  const certs=CERTS.filter(c=>S.cert[c.id]==="Earned"&&RC[c.id]).map(c=>RC[c.id]);
+  const nP=projects.length;
+  const sug=`Data analyst fresher (MCA 2025) skilled in ${sh.length?sh.join(", "):"[your skills]"}. ${nP?`Built ${nP} end-to-end project${nP>1?"s":""} with dashboards and written insights. `:""}Zoology background brings a research mindset and strong attention to data quality.`;
+  return{name:ph(r.name,"[Your Name]"),contact:[r.email,r.phone,r.city,r.l1,r.l2].filter(x=>x&&x.trim()).map(x=>x.trim()),
+    summary:ph(r.summary,""),sug,skills:sk,projects,certs,
+    edu:(r.edu||"").split("\n").map(x=>x.trim()).filter(Boolean),exp:(r.exp||"").split("\n").map(x=>x.trim()).filter(Boolean)}
+}
+function modelText(m){
+  return [m.name,m.contact.join(" | "),m.summary,"Skills: "+m.skills.join("; "),
+   ...m.projects.flatMap(p=>[p.name+(p.link?" ("+p.link+")":""),...p.bullets]),
+   ...m.certs,...m.edu,...m.exp].join("\n")}
+function mk(x){return esc(x).replace(/\[[^\]]+\]/g,m=>`<mark>${m}</mark>`)}
+function modelHTML(m){
+  const sec=(t,b)=>b?`<h2>${t}</h2>${b}`:"";
+  const lst=a=>a.length?`<ul>${a.map(x=>`<li>${mk(x)}</li>`).join("")}</ul>`:"";
+  return `<h1>${mk(m.name)}</h1><div class="ct">${m.contact.length?m.contact.map(esc).join(" | "):'<mark>[Add email, phone, city and links]</mark>'}</div>`+
+  sec("PROFESSIONAL SUMMARY",`<p>${m.summary?mk(m.summary):'<mark>[Write a summary or press “Fill suggested summary”]</mark>'}</p>`)+
+  sec("SKILLS",m.skills.length?`<p>${m.skills.map(mk).join(" · ")}</p>`:'<p><mark>[Skills appear here as you finish roadmap phases]</mark></p>')+
+  sec("PROJECTS",m.projects.length?m.projects.map(p=>`<div class="pr">${mk(p.name)}<span>${esc(p.link)}</span></div>${lst(p.bullets)}`).join(""):'<p><mark>[Finish a project and it appears here]</mark></p>')+
+  (m.exp.length?sec("EXPERIENCE",lst(m.exp)):"")+
+  sec("EDUCATION",m.edu.length?lst(m.edu):'<p><mark>[Add your education]</mark></p>')+
+  (m.certs.length?sec("CERTIFICATIONS",lst(m.certs)):"")}
+function checks(m,t){
+  const r=R(),wc=t.split(/\s+/).filter(Boolean).length,sw=m.summary.split(/\s+/).filter(Boolean).length;
+  const nums=m.projects.every(p=>/\d/.test(p.bullets[1]));
+  return[
+   [r.name&&r.email&&r.phone,"Name, email and phone are filled in"],
+   [r.l1,"LinkedIn link added"],
+   [m.summary&&sw<=60,"Summary present and under 60 words"+(sw>60?" (now "+sw+")":"")],
+   [m.projects.length>=3,"At least 3 projects finished ("+m.projects.length+" now)"],
+   [m.projects.length&&m.projects.every(p=>p.link),"Every finished project has a link"],
+   [m.projects.length&&nums,"Every project’s key finding has a number"],
+   [m.certs.length>=1,"At least one certificate earned"],
+   [m.skills.length>=6,"At least 6 skills listed ("+m.skills.length+" now)"],
+   [m.edu.length>=1,"Education added"],
+   [!t.includes("["),"No [placeholders] left"],
+   [wc<=650,"Fits one page ("+wc+" words; keep under about 650)"]]}
+function matchHTML(m,t){
+  const jd=(R().jd||"").toLowerCase();if(!jd.trim())return'<p class="note">Paste a job description above to see which keywords match.</p>';
+  const low=t.toLowerCase(),inJD=KWL.filter(k=>jd.includes(k)),have=inJD.filter(k=>low.includes(k)),miss=inJD.filter(k=>!low.includes(k));
+  if(!inJD.length)return'<p class="note">No common analytics keywords found in that text.</p>';
+  return`<p><b>${Math.round(have.length/inJD.length*100)}% of the job’s keywords are in her resume</b> (${have.length} of ${inJD.length}).</p>
+  <div class="match">${have.map(k=>`<span class="y">${esc(k)}</span>`).join("")}${miss.map(k=>`<span class="n">${esc(k)} (missing)</span>`).join("")}</div>
+  ${miss.length?'<p class="note">Add a missing keyword only if she truly knows it. Never claim a skill she can’t explain in an interview.</p>':""}`}
+function aiPrompt(m,t){
+  const r=R();
+  return`You are a resume coach for entry-level data analyst jobs in India. Improve the resume below for ATS and for a human recruiter.
+Rules: keep every fact true; do not invent numbers, tools or experience; keep it to one page; use strong action verbs and results; keep the format plain text with simple headings.
+${(r.jd||"").trim()?"Tailor it to this job description, using its keywords only where they are truthful.\n\nJOB DESCRIPTION:\n"+r.jd.trim()+"\n":""}
+Return: 1) a better professional summary (max 50 words), 2) improved project bullets, 3) skills I may be missing from the job description, 4) three things to fix.
+
+MY RESUME:
+${t}
+${(r.old||"").trim()?"\nOLD RESUME (reference only):\n"+r.old.trim():""}`}
+function copyTo(txt,cb){(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(cb).catch(()=>{const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(e){}ta.remove();cb()})}
+function updateResume(){
+  if(!$("rpage"))return;
+  const m=resModel(),t=modelText(m);
+  $("rpage").innerHTML=modelHTML(m);
+  const c=checks(m,t),ok=c.filter(x=>x[0]).length;
+  $("rcheck").innerHTML=`<p style="margin:0"><b>${ok} of ${c.length} checks passed</b></p><ul>${c.map(x=>`<li><span class="${x[0]?"ok":"no"}">${x[0]?"✓":"✗"}</span> ${esc(x[1])}</li>`).join("")}</ul>`;
+  $("rmatch").innerHTML=matchHTML(m,t);
+}
+function renderResume(){
+  const r=R(),m=resModel(),fin=PROJ.map((j,i)=>i).filter(projDone);
+  $("t-resume").innerHTML=`<div class="card noprint"><h2>Your resume builds itself</h2>
+    <p style="margin:0">Finish projects, earn certificates and complete roadmap phases, and they appear in the resume automatically. Only things she has really done are added.</p>
+    <p class="note">Her details stay in this browser. They are not in the code or the GitHub repo. A downloaded backup file will contain them, so keep it private.</p></div>
+  <div class="card noprint"><h2>Her details</h2><div class="fld">${RF.map(f=>`<div><label for="r-${f[0]}">${f[1]}</label><input id="r-${f[0]}" data-r="${f[0]}" value="${esc(r[f[0]]||"")}"></div>`).join("")}</div>
+    <div class="one"><label for="r-summary">Professional summary (2 to 3 lines)</label><textarea id="r-summary" data-r="summary">${esc(r.summary||"")}</textarea></div>
+    <p style="margin:0 0 10px"><button class="btn ghost" data-act="sug">Fill suggested summary</button></p>
+    <div class="one"><label for="r-edu">Education (one line each, e.g. MCA, College name, 2025)</label><textarea id="r-edu" data-r="edu">${esc(r.edu||"")}</textarea></div>
+    <div class="one"><label for="r-exp">Internship or work (optional, one bullet per line)</label><textarea id="r-exp" data-r="exp">${esc(r.exp||"")}</textarea></div>
+    <div class="one"><label for="r-xs">Extra skills she truly has (comma separated)</label><input id="r-xs" data-r="xs" value="${esc(r.xs||"")}"></div></div>
+  <div class="card noprint"><h2>Project details for the resume</h2>${fin.length?fin.map(pi=>{const q=S.pres[pi]||{};return`<div class="one" style="border-top:1px solid var(--line);padding-top:10px"><b>${esc(RN[pi])}</b>
+    <label for="p${pi}l">Link to dashboard or GitHub</label><input id="p${pi}l" data-rp="${pi}.l" value="${esc(q.l||"")}">
+    <label for="p${pi}s">Data size (e.g. 10,000 orders)</label><input id="p${pi}s" data-rp="${pi}.s" value="${esc(q.s||"")}">
+    <label for="p${pi}f">Key finding with a number</label><input id="p${pi}f" data-rp="${pi}.f" value="${esc(q.f||"")}">
+    <label for="p${pi}r">Result or recommendation</label><input id="p${pi}r" data-rp="${pi}.r" value="${esc(q.r||"")}"></div>`}).join(""):'<p class="empty">No finished projects yet. Tick every step of a project in the Projects tab and it shows up here.</p>'}</div>
+  <div class="card rwrap"><div class="noprint" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px"><h2 style="margin:0">Resume preview</h2><button class="btn" data-act="print">Print or save as PDF</button></div>
+    <div id="rpage"></div><p class="note noprint">Yellow text is a placeholder to replace. In the print window choose “Save as PDF” and turn off headers and footers.</p></div>
+  <div class="card noprint chk"><h2>Resume strength</h2><div id="rcheck"></div></div>
+  <div class="card noprint"><h2>Job match checker</h2><div class="one"><label for="r-jd">Paste a job description</label><textarea id="r-jd" data-r="jd">${esc(r.jd||"")}</textarea></div><div id="rmatch" class="match"></div></div>
+  <div class="card noprint"><h2>Improve with AI</h2><p style="margin:0 0 10px">This copies a ready prompt with her resume (and the job description, if pasted). Paste it into Claude or ChatGPT, then copy only the facts that are true back into her details above.</p>
+    <button class="btn" data-act="prompt">${copied===-2?"Copied":"Copy AI prompt"}</button></div>
+  <div class="card noprint"><h2>Old resume (reference)</h2><p class="note" style="margin-top:0">Paste the old resume text here and copy names, education and old bullets into the fields above. It is also included in the AI prompt.</p>
+    <div class="one"><textarea data-r="old" aria-label="Old resume text" style="min-height:140px">${esc(r.old||"")}</textarea></div></div>`;
+  updateResume();
+}
+
+const ST=["Saved","Applied","Interview","Offer","Rejected"];
+const KEY="analyst-track-v1";
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+S=S||{done:{},daily:{},apps:[],prac:{}};
+S.proj=S.proj||{};S.cert=S.cert||{};S.res=S.res||{};S.pres=S.pres||{};
+let memoryOnly=false;
+function save(){fix();sync(false);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){memoryOnly=true}}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const ids=(p,i)=>p+"-"+i;
+
+function phaseStats(p){const n=PLAN[p].k.length;let d=0;PLAN[p].k.forEach((_,i)=>{if(S.done[ids(p,i)])d++});return{d,n}}
+function totalStats(){let d=0,n=0;PLAN.forEach((_,p)=>{const s=phaseStats(p);d+=s.d;n+=s.n});return{d,n}}
+function streak(){let c=0;const d=new Date();for(;;){const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");const day=S.daily[k]||{};const any=Object.values(day).some(Boolean);if(any)c++;else if(k!==today())break;else{}d.setDate(d.getDate()-1);if(c>400)break}return c}
+function dueApps(){return S.apps.filter(a=>a.status==="Applied"&&Date.now()-a.ts>=7*864e5)}
+function appsThisWeek(){const since=Date.now()-7*864e5;return S.apps.filter(a=>a.status!=="Saved"&&a.ts>=since).length}
+function nextTask(){for(let p=0;p<PLAN.length;p++)for(let i=0;i<PLAN[p].k.length;i++)if(!S.done[ids(p,i)])return{p,i,t:PLAN[p].k[i]};return null}
+
+const LV=[0,60,150,300,500,800,1200,1700,2300,3000,4000];
+const LN=["Data Rookie","Query Apprentice","Sheet Wizard","Dashboard Maker","Insight Hunter","DAX Tamer","Story Teller","Analyst","Senior Analyst","Data Sensei","Legend"];
+const JOKES=["A SQL query walks into a bar, sees two tables and asks: can I join you?","Analysts spend most of their time cleaning data, and the rest explaining why it was dirty.","NULL is not zero and not empty. NULL is just unknown.","Why did the dashboard break up with the spreadsheet? Too many unresolved references.","My favourite cardio is scrolling through pivot table fields.","Correlation is not causation, but it does buy you a coffee and a follow-up question.","There are 10 kinds of people: those who understand binary and those who don’t.","Excel never forgets. It just shows #REF!."];
+const QUESTS=["Write a query that finds duplicate rows in any table.","Build one DAX measure for profit margin.","Explain one of your projects out loud in two minutes.","Clean one messy column using Power Query.","Answer three questions from the Interview tab without looking.","Message one analyst or recruiter on LinkedIn.","Add one real number to a resume bullet.","Find one insight in a Kaggle dataset and write it in one sentence.","Make a chart and delete half of its clutter.","Rewrite one SQL query using a CTE.","Learn one new Excel shortcut and use it three times.","Read one job description and list its top five skills.","Add one new keyword you truly know to your resume.","Redo one old query without looking at the answer."];
+const ACH=[
+{id:"first",e:"🌱",n:"First step",d:"Finish any roadmap or project step",t:()=>Object.values(S.done).some(Boolean)||Object.values(S.proj).some(Boolean)},
+{id:"sql50",e:"🔍",n:"Query rookie",d:"Half of the SQL phase done",t:()=>{const x=phaseStats(0);return x.d/x.n>=.5}},
+{id:"sql",e:"🗃️",n:"SQL master",d:"Complete the SQL phase",t:()=>{const x=phaseStats(0);return x.d===x.n}},
+{id:"pbi",e:"📊",n:"Dashboard maker",d:"Complete the Power BI phase",t:()=>{const x=phaseStats(2);return x.d===x.n}},
+{id:"st3",e:"🔥",n:"3-day streak",d:"Study 3 days in a row",t:()=>streak()>=3},
+{id:"st7",e:"🌟",n:"7-day streak",d:"Study 7 days in a row",t:()=>streak()>=7},
+{id:"st14",e:"👑",n:"14-day streak",d:"Study 14 days in a row",t:()=>streak()>=14},
+{id:"d4",e:"⭐",n:"Perfect day",d:"All four daily tasks in one day",t:()=>Object.keys(S.daily).some(allFour)},
+{id:"sp5",e:"⏱️",n:"Focus hero",d:"Finish 5 focus sprints",t:()=>(S.sprints||0)>=5},
+{id:"pr10",e:"🧠",n:"Interview ready",d:"Practise 10 questions",t:()=>Object.values(S.prac).filter(Boolean).length>=10},
+{id:"p1",e:"🏆",n:"Project 1 done",d:"Finish the retail project",t:()=>projDone(0)},
+{id:"auto",e:"🤖",n:"Automation ace",d:"Finish the automated report",t:()=>projDone(1)},
+{id:"p3",e:"🎯",n:"Portfolio builder",d:"Finish 3 projects",t:()=>PROJ.filter((_,i)=>projDone(i)).length>=3},
+{id:"c1",e:"🎓",n:"Certified",d:"Earn any certificate",t:()=>Object.values(S.cert).includes("Earned")},
+{id:"pl",e:"💎",n:"PL-300 passed",d:"Earn the Power BI certificate",t:()=>S.cert.pl300==="Earned"},
+{id:"res",e:"📄",n:"Resume pro",d:"Pass 9 resume checks",t:()=>{const m=resModel();return checks(m,modelText(m)).filter(x=>x[0]).length>=9}},
+{id:"a5",e:"📨",n:"Apply machine",d:"Track 5 applications",t:()=>S.apps.length>=5},
+{id:"a25",e:"🚀",n:"Relentless",d:"Track 25 applications",t:()=>S.apps.length>=25},
+{id:"iv",e:"🎤",n:"Interview time",d:"Get an interview",t:()=>S.apps.some(a=>a.status==="Interview"||a.status==="Offer")},
+{id:"of",e:"🎉",n:"Offer!",d:"Get a job offer",t:()=>S.apps.some(a=>a.status==="Offer")}];
+function fix(){S.done=S.done||{};S.daily=S.daily||{};S.apps=S.apps||[];S.prac=S.prac||{};S.proj=S.proj||{};S.cert=S.cert||{};S.res=S.res||{};S.pres=S.pres||{};S.ach=S.ach||{};S.lv=S.lv||0;S.sprints=S.sprints||0}
+function allFour(k){const d=S.daily[k]||{};return[0,1,2,3].every(i=>d[i])}
+function xp(){let x=0;x+=Object.values(S.done).filter(Boolean).length*10;x+=Object.values(S.proj).filter(Boolean).length*15;x+=PROJ.filter((_,i)=>projDone(i)).length*50;Object.values(S.daily).forEach(d=>{x+=Object.values(d).filter(Boolean).length*5});x+=(S.sprints||0)*5;x+=S.apps.length*8+S.apps.filter(a=>a.status==="Interview").length*20+S.apps.filter(a=>a.status==="Offer").length*100;x+=Object.values(S.cert).filter(v=>v==="Earned").length*100;x+=Object.values(S.prac).filter(Boolean).length*3;return x}
+function levelInfo(){const x=xp();let i=0;LV.forEach((v,j)=>{if(x>=v)i=j});const nx=LV[i+1];return{x,i,name:LN[i],nx,pct:nx?Math.round((x-LV[i])/(nx-LV[i])*100):100}}
+function sync(silent){const L=levelInfo();if(!silent&&L.i>S.lv){toast("Level up! You are now "+L.name);confetti(110)}S.lv=L.i;
+  ACH.forEach(a=>{if(!S.ach[a.id]&&a.t()){S.ach[a.id]=1;if(!silent){toast("Badge unlocked: "+a.e+" "+a.n);confetti(70)}}})}
+let tt=null;
+function toast(m){const e=$("toast");if(!e)return;e.textContent=m;e.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("on"),3600)}
+function confetti(n){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  const c=$("cf");if(!c)return;const x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+  const cs=["#ff7ac3","#7aa7ff","#ffd166","#4cc79b","#b388ff","#ff8a5c"];
+  const ps=Array.from({length:n||90},()=>({x:innerWidth/2+(Math.random()-.5)*160,y:innerHeight*.75,vx:(Math.random()-.5)*14,vy:-8-Math.random()*10,r:4+Math.random()*5,c:cs[Math.floor(Math.random()*cs.length)],a:Math.random()*6}));
+  let f=0;(function step(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=.2;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillRect(-p.r,-p.r/2,p.r*2,p.r);x.restore()});
+    if(++f<110)requestAnimationFrame(step);else x.clearRect(0,0,c.width,c.height)})()}
+const PK={anime:"petal",safari:"leaf",ocean:"bubble"};
+const TAGS={anime:"がんばって！",safari:"🐾 Wild about data",ocean:"🌊 Dive into data",sunset:"🌅 Golden hour",arcade:"🕹️ Player 1"};
+const DARKT={dark:1,ocean:1,arcade:1};
+function particles(kind){document.querySelectorAll(".pt").forEach(e=>e.remove());if(!kind)return;
+  for(let i=0;i<14;i++){const e=document.createElement("span");e.className="pt "+kind;const z=8+Math.random()*8;e.style.cssText=`left:${Math.random()*100}vw;width:${z}px;height:${z}px;animation-duration:${9+Math.random()*9}s;animation-delay:${-Math.random()*14}s`;document.body.appendChild(e)}}
+function setTheme(t){const h=document.documentElement;h.dataset.theme=t;if(DARKT[t])h.dataset.dark="1";else delete h.dataset.dark;
+  try{localStorage.setItem("analyst-theme",t)}catch(e){}
+  document.querySelectorAll("[data-theme-btn]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.themeBtn===t));
+  const g=$("tag");if(g)g.textContent=TAGS[t]||"";particles(PK[t])}
+function mochi(happy){
+  const eyes=happy?'<path d="M25 40q4-7 8 0M47 40q4-7 8 0" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>':'<circle cx="30" cy="40" r="3.2" fill="var(--ink)"/><circle cx="50" cy="40" r="3.2" fill="var(--ink)"/>';
+  return`<svg viewBox="0 0 80 70" width="88" height="77" role="img" aria-label="Mochi, your study buddy"><polygon points="14,28 18,6 34,19" fill="var(--card)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><polygon points="66,28 62,6 46,19" fill="var(--card)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="40" cy="44" rx="30" ry="24" fill="var(--card)" stroke="var(--ink)" stroke-width="2.5"/>${eyes}<ellipse cx="22" cy="49" rx="5" ry="3" fill="#ff9ec9" opacity=".7"/><ellipse cx="58" cy="49" rx="5" ry="3" fill="#ff9ec9" opacity=".7"/><path d="M36 49q4 4 8 0" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/></svg>`}
+let bubble=null,qr=null;
+const tm={left:1500,end:0,iv:null};
+const fmt=n=>String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");
+function tick(){tm.left=Math.max(0,Math.round((tm.end-Date.now())/1000));const e=$("tm");if(e)e.textContent=fmt(tm.left);
+  if(tm.left<=0){clearInterval(tm.iv);tm.iv=null;tm.left=1500;S.sprints=(S.sprints||0)+1;save();toast("Sprint done! +5 XP. Take a 5-minute break.");confetti(60);if(cur==="today")refresh()}}
+function questToday(){const d=new Date();return QUESTS[Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate())/864e5)%QUESTS.length]}
+function renderToday(){
+  const t=totalStats(),pct=Math.round(t.d/t.n*100),day=S.daily[today()]||{},nx=nextTask(),L=levelInfo();
+  const n4=[0,1,2,3].filter(i=>day[i]).length,st=streak(),anime=document.documentElement.dataset.theme==="anime";
+  let msg=n4===4?"All four done today! Mochi is doing a happy dance.":n4>0?n4+" of 4 done. Keep going, you’re on a roll!":st>0?"Your streak is at "+st+" day"+(st>1?"s":"")+". One small task keeps it alive.":"Hi! Pick one small thing today. SQL practice is a great start.";
+  if(bubble)msg=bubble;else if(anime)msg+=" Ganbatte!";
+  const bars=PLAN.map((p,i)=>{const s=phaseStats(i);const h=Math.round(s.d/s.n*100);return `<div class="col"><div class="bar" title="${esc(p.t)}"><i style="height:${h}%"></i></div><b>${h}%</b>${esc(p.t.split(" ")[0])}</div>`}).join("");
+  const unl=ACH.filter(a=>S.ach[a.id]).length,qd=day.q;
+  const run=!!tm.iv;
+  let qhtml="";
+  if(qr){qhtml=`<div class="next"><small>${esc(QS[qr.i][0])}</small><b>${esc(QS[qr.i][1])}</b></div>`+(qr.show?`<div class="a" style="margin:10px 0;padding:12px;background:var(--bg);border-radius:8px;white-space:pre-wrap;font-size:15px">${esc(QS[qr.i][2])}</div><p class="rowf" style="margin:0"><button class="btn" data-act="qgot">I knew it (+3 XP)</button><button class="btn ghost" data-act="qnot">Not yet</button></p>`:`<p style="margin:10px 0 0"><button class="btn" data-act="qshow">Show answer</button></p>`)}
+  else qhtml=`<p style="margin:0 0 10px">Get one random interview question. Say the answer out loud first.</p><button class="btn" data-act="qask">Ask me one</button>`;
+  $("t-today").innerHTML=`
+  <div class="card"><div class="mas"><button data-act="mochi" aria-label="Tap Mochi for a joke">${mochi(n4>0)}</button>
+    <div class="bubble"><b>Level ${L.i+1}: ${esc(L.name)}</b><div class="xp" role="img" aria-label="${L.pct}% to next level"><i style="width:${L.pct}%"></i></div>
+    <small class="sub">${L.x} XP${L.nx?" · "+(L.nx-L.x)+" to next level":" · max level"}</small><p style="margin:8px 0 0">${esc(msg)}</p></div></div>
+    <p class="note" style="margin-bottom:0">Tap Mochi for a joke. XP: roadmap step 10, project step 15, daily task 5, application 8, practised question 3, certificate 100.</p></div>
+  <div class="card"><h2>Overall progress: ${pct}%</h2>
+    <div class="chart" role="img" aria-label="Progress by phase">${bars}</div>
+    <div class="stats">
+      <div class="stat"><b>${st}</b><span>day streak</span></div>
+      <div class="stat"><b>${appsThisWeek()}</b><span>applications in the last 7 days</span></div>
+      <div class="stat"><b>${S.apps.filter(a=>a.status==="Interview").length}</b><span>interviews in progress</span></div>
+      <div class="stat"><b>${PROJ.filter((_,i)=>projDone(i)).length}/${PROJ.length}</b><span>projects finished</span></div>
+    </div></div>
+  <div class="card"><h2>Today’s four things</h2>
+    ${DAILY.map((d,i)=>`<label class="ck ${day[i]?"done":""}"><input type="checkbox" data-daily="${i}" ${day[i]?"checked":""}><span>${esc(d)}</span></label>`).join("")}
+    <p class="note">Do these four on most days and the rest follows. Missing a day is fine; the streak counts days with at least one item done.</p></div>
+  <div class="card"><h2>Quest of the day</h2>
+    <label class="ck ${qd?"done":""}"><input type="checkbox" data-daily="q" ${qd?"checked":""}><span>${esc(questToday())}</span></label></div>
+  <div class="card"><h2>Focus sprint</h2><div class="rowf"><p class="tm" id="tm" aria-live="off">${fmt(tm.left)}</p>
+    <button class="btn" data-act="tstart">${run?"Pause":"Start 25 min"}</button><button class="btn ghost" data-act="treset">Reset</button></div>
+    <p class="note">Phone away, one task only. Each finished sprint gives 5 XP. Sprints done: ${S.sprints||0}.</p></div>
+  <div class="card"><h2>Quick interview round</h2>${qhtml}</div>
+  ${dueApps().length?`<div class="card"><h2>Follow-ups due (${dueApps().length})</h2><p style="margin:0 0 6px">These applications are a week old with no update. Send a short follow-up (template in the Toolkit tab), then change the status when you hear back.</p>${dueApps().slice(0,5).map(a=>`<p style="margin:4px 0"><b>${esc(a.company)}</b> · ${esc(a.role)}</p>`).join("")}</div>`:""}
+  <div class="card"><h2>Next topic to learn</h2>
+    ${nx?`<div class="next"><small>${esc(PLAN[nx.p].t)}</small><b>${esc(nx.t)}</b></div><p><button class="btn" data-finish="${ids(nx.p,nx.i)}">Mark as done</button></p>`:`<div class="next"><b>Every topic is done. Keep applying and keep practising interviews.</b></div>`}
+  </div>
+  <div class="card"><h2>Badges: ${unl}/${ACH.length}</h2><div class="bg">${ACH.map(a=>`<div class="bd ${S.ach[a.id]?"":"lock"}" title="${esc(a.d)}"><span class="e">${a.e}</span>${esc(a.n)}<small>${esc(a.d)}</small></div>`).join("")}</div></div>`;
+}
+function renderPlan(){
+  $("t-plan").innerHTML=PLAN.map((p,pi)=>{const s=phaseStats(pi);return `<div class="card">
+    <div class="ph-head"><h2>${esc(p.t)}</h2><small>${esc(p.w)} · ${s.d}/${s.n}</small></div>
+    <div class="mini"><i style="width:${s.d/s.n*100}%"></i></div>
+    <p class="ph-goal">Goal: ${esc(p.g)}</p>
+    ${p.k.map((k,i)=>{const id=ids(pi,i),on=S.done[id];return `<label class="ck ${on?"done":""}"><input type="checkbox" data-task="${id}" ${on?"checked":""}><span>${esc(k)}</span></label>`}).join("")}
+  </div>`}).join("");
+}
+
+function renderApps(){
+  const counts=ST.map(s=>`${s}: ${S.apps.filter(a=>a.status===s).length}`).join(" · ");
+  $("t-apps").innerHTML=`<div class="card"><h2>Add a job</h2>
+    <form class="add" id="appform">
+      <input name="company" placeholder="Company" required aria-label="Company">
+      <input name="role" placeholder="Role" required aria-label="Role">
+      <input class="full" name="link" placeholder="Job link (optional)" aria-label="Job link">
+      <select name="status" aria-label="Status">${ST.map(s=>`<option ${s==="Applied"?"selected":""}>${s}</option>`).join("")}</select>
+      <button class="btn" type="submit">Add job</button>
+    </form></div>
+  <div class="card"><h2>Your applications (${S.apps.length})</h2>
+    <p class="note" style="margin-top:0">${counts}</p>
+    ${S.apps.length?S.apps.map(a=>`<div class="row"><div><b>${a.link?`<a href="${esc(a.link)}" target="_blank" rel="noopener" style="color:inherit">${esc(a.company)}</a>`:esc(a.company)}</b><small>${esc(a.role)} · ${new Date(a.ts).toLocaleDateString()}${a.status==="Applied"&&Date.now()-a.ts>=7*864e5?` · <b style="color:var(--bad)">Follow up now</b>`:""}</small></div>
+      <select data-st="${a.id}" aria-label="Status for ${esc(a.company)}">${ST.map(s=>`<option ${s===a.status?"selected":""}>${s}</option>`).join("")}</select>
+      <button class="x" data-del="${a.id}" aria-label="Delete ${esc(a.company)}">×</button></div>`).join(""):`<p class="empty">No jobs yet. Add the first one you apply to.</p>`}
+  </div>`;
+}
+
+let cat="All";
+function renderPrep(){
+  const cats=["All","SQL","Excel","Power BI","Statistics","Python","Analytics","Behavioural"];
+  const list=QS.map((q,i)=>({q,i})).filter(o=>cat==="All"||o.q[0]===cat);
+  const pr=Object.keys(S.prac).filter(k=>S.prac[k]).length;
+  $("t-prep").innerHTML=`<div class="card"><h2>Interview questions · ${pr}/${QS.length} practised</h2>
+    <div class="chips">${cats.map(c=>`<button data-cat="${c}" aria-pressed="${c===cat}">${c}</button>`).join("")}</div>
+    ${list.map(({q,i})=>`<details class="q"><summary><span>${esc(q[1])}</span><span class="tag">${esc(q[0])}${S.prac[i]?" · practised":""}</span></summary>
+      <div class="a">${esc(q[2])}</div>
+      <label class="ck"><input type="checkbox" data-prac="${i}" ${S.prac[i]?"checked":""}><span>I can answer this in my own words</span></label></details>`).join("")}
+    <p class="note">Read the question, answer it aloud first, then open the answer. Say it in your own words and give an example from her projects.</p></div>`;
+}
+
+const TABS=[["today","Today",renderToday],["plan","Roadmap",renderPlan],["proj","Projects",renderProj],["certs","Certificates",renderCerts],["kit","Toolkit",renderKit],["resume","Resume",renderResume],["apps","Applications",renderApps],["prep","Interview prep",renderPrep]];
+let cur="today";
+function show(id){
+  cur=id;bubble=null;
+  TABS.forEach(([k,,fn])=>{$("t-"+k).hidden=k!==id;if(k===id)fn()});
+  $("tabs").innerHTML=TABS.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${k===id}">${l}</button>`).join("");
+}
+function refresh(){const f=TABS.find(t=>t[0]===cur)[2];const y=window.scrollY;f();window.scrollTo(0,y)}
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.tab)show(b.dataset.tab);
+  else if(b.dataset.act==="print"){window.print()}
+  else if(b.dataset.act==="mochi"){bubble=JOKES[Math.floor(Math.random()*JOKES.length)];refresh()}
+  else if(b.dataset.act==="tstart"){if(tm.iv){clearInterval(tm.iv);tm.iv=null}else{tm.end=Date.now()+tm.left*1000;tm.iv=setInterval(tick,1000)}refresh()}
+  else if(b.dataset.act==="treset"){clearInterval(tm.iv);tm.iv=null;tm.left=1500;refresh()}
+  else if(b.dataset.act==="qask"){const un=QS.map((_,i)=>i).filter(i=>!S.prac[i]),pool=un.length?un:QS.map((_,i)=>i);qr={i:pool[Math.floor(Math.random()*pool.length)],show:false};refresh()}
+  else if(b.dataset.act==="qshow"){qr.show=true;refresh()}
+  else if(b.dataset.act==="qgot"){S.prac[qr.i]=true;qr=null;save();toast("Nice! +3 XP");refresh()}
+  else if(b.dataset.act==="qnot"){qr=null;refresh()}
+  else if(b.dataset.themeBtn){}
+  else if(b.dataset.act==="sug"){R().summary=resModel().sug;save();renderResume()}
+  else if(b.dataset.act==="prompt"){const m=resModel();copyTo(aiPrompt(m,modelText(m)),()=>{copied=-2;renderResume();copied=-1})}
+  else if(b.dataset.cf){cf=b.dataset.cf;refresh()}
+  else if(b.dataset.copy!==undefined){const i=+b.dataset.copy,txt=TPL[i][1];const done=()=>{copied=i;const o=[...document.querySelectorAll("#t-kit details.q")].map(d=>d.open);renderKit();document.querySelectorAll("#t-kit details.q").forEach((d,j)=>{d.open=o[j]})};(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(done).catch(()=>{const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(e){}ta.remove();done()})}
+  else if(b.dataset.cat){cat=b.dataset.cat;refresh()}
+  else if(b.dataset.finish){S.done[b.dataset.finish]=true;save();refresh()}
+  else if(b.dataset.del){S.apps=S.apps.filter(a=>a.id!==b.dataset.del);save();refresh()}
+});
+document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.pj!==undefined){const i=+d.dataset.pj;d.open?openPj.add(i):openPj.delete(i)}},true);
+document.addEventListener("input",e=>{const t=e.target;
+  if(t.dataset.r){S.res[t.dataset.r]=t.value;save();updateResume()}
+  else if(t.dataset.rp){const a=t.dataset.rp.split(".");S.pres[a[0]]=S.pres[a[0]]||{};S.pres[a[0]][a[1]]=t.value;save();updateResume()}});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.daily!==undefined){const k=today();S.daily[k]=S.daily[k]||{};S.daily[k][t.dataset.daily]=t.checked;save();if(t.checked&&allFour(k))confetti(80);refresh()}
+  else if(t.dataset.cert){S.cert[t.dataset.cert]=t.value;save();refresh()}
+  else if(t.dataset.pstep){S.proj[t.dataset.pstep]=t.checked;save();refresh()}
+  else if(t.dataset.task){S.done[t.dataset.task]=t.checked;save();refresh()}
+  else if(t.dataset.prac!==undefined){S.prac[t.dataset.prac]=t.checked;save();const open=[...document.querySelectorAll("details.q[open] summary span:first-child")].map(s=>s.textContent);refresh();document.querySelectorAll("details.q").forEach(d=>{if(open.includes(d.querySelector("summary span").textContent))d.open=true})}
+  else if(t.dataset.st){const a=S.apps.find(x=>x.id===t.dataset.st);if(a){a.status=t.value;if(t.value==="Applied")a.ts=Date.now();save();refresh()}}
+});
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="appform")return;e.preventDefault();
+  const f=new FormData(e.target);let link=(f.get("link")||"").trim();
+  if(link&&!/^https?:\/\//i.test(link))link="https://"+link;
+  S.apps.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),company:f.get("company").trim(),role:f.get("role").trim(),link,status:f.get("status"),ts:Date.now()});
+  save();refresh();
+});
+
+$("exp").onclick=()=>{
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:"application/json"}));
+  a.download="analyst-track-backup-"+today()+".json";a.click();URL.revokeObjectURL(a.href);
+};
+$("imp").onclick=()=>$("file").click();
+$("file").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||typeof d!=="object"||!d.done||!Array.isArray(d.apps))throw 0;S={done:d.done,daily:d.daily||{},apps:d.apps,prac:d.prac||{},proj:d.proj||{},cert:d.cert||{},res:d.res||{},pres:d.pres||{},ach:{},lv:0,sprints:d.sprints||0};fix();sync(true);save();refresh()}catch(x){alert("That file is not a valid backup.")}};
+  r.readAsText(f);e.target.value="";
+};
+$("rst").onclick=()=>{if(confirm("Delete all progress and applications? This cannot be undone.")){S={done:{},daily:{},apps:[],prac:{},proj:{},cert:{},res:{},pres:{},ach:{},lv:0,sprints:0};save();refresh()}};
+
+document.addEventListener("click",e=>{const b=e.target.closest("[data-theme-btn]");if(b){setTheme(b.dataset.themeBtn);if(cur==="today"||cur==="resume")refresh()}});
+fix();sync(true);save();
+setTheme(document.documentElement.dataset.theme||"light");
+show("today");
+</script>
+</body>
+</html>
